@@ -53,4 +53,4 @@ if __name__ == "__main__":
     submission = pd.DataFrame({"id": idx, "prediction": predictions})
     proc = subprocess.Popen(["git", "rev-parse", "HEAD"], stdout=subprocess.PIPE)
     submission_name = proc.stdout.read().strip()
-    submission.to_csv("../submissions/" + submission_name + ".csv", index=False)
+    submission.to_csv("./submissions/" + submission_name + ".csv", index=False)
