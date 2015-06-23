@@ -25,6 +25,15 @@ svm = SVC()
 model = pipeline.Pipeline([('svd', svd), ('scl', scl), ('svm', svm)])
 
 # hyperparams
-# np.logspace(0, 10, num=3)
-params = {'svd__n_components' : [200, 400], 'svm__C': [10, 12]}
+params = {
+  'svd__n_components' : [200, 400],
+  'svm__C': [10, 12]
+}
+
+# params = {
+#   'svd__n_components' : np.logspace(2.2, 2.6, num=3),
+#   'svm__C': np.logspace(.1, 2., num=3),
+#   'svm__gamma': np.logspace(.1, 3., num=4),
+#   'svm__class_weight': ['auto', None]
+# }
 

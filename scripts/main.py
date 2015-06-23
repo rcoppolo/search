@@ -1,6 +1,7 @@
 import os
 import sys
 import ml_metrics
+import numpy as np
 import pandas as pd
 from sklearn import metrics
 from sklearn.grid_search import GridSearchCV, RandomizedSearchCV
