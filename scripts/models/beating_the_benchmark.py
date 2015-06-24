@@ -1,4 +1,4 @@
-# creates model, params
+# appends to model, params
 
 """
 Beating the Benchmark
@@ -7,7 +7,7 @@ __author__ : Abhishek
 
 """
 
-from sklearn import pipeline
+from sklearn.pipeline import Pipeline
 from sklearn.decomposition import TruncatedSVD
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
@@ -22,11 +22,11 @@ scl = StandardScaler()
 svm = SVC()
 
 # Create the pipeline
-model = pipeline.Pipeline([('svd', svd), ('scl', scl), ('svm', svm)])
+models.append(Pipeline([('svd', svd), ('scl', scl), ('svm', svm)]))
 
 # hyperparams
-params = {
+params.append({
   'svd__n_components' : [400],
   'svm__C': [10]
-}
+})
 

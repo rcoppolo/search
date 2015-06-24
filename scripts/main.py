@@ -1,9 +1,11 @@
 import os
 import sys
+import subprocess
 import ml_metrics
 import numpy as np
 import pandas as pd
 from sklearn import metrics
+from sklearn import cross_validation
 from sklearn.grid_search import GridSearchCV, RandomizedSearchCV
 
 if __name__ == "__main__":
@@ -22,36 +24,76 @@ if __name__ == "__main__":
   score_variance = train.relevance_variance.values
   train = train.drop(['median_relevance', 'relevance_variance'], axis=1)
 
-  # one model at a time, for now
+  # required variables
+  features, test_features, models, params, best = [], [], [], [], []
+
+  # my ugly way of trying out different features and models...
 
   # define features
   execfile('./scripts/features/tfidf.py')
+  execfile('./scripts/features/porter_stemmer.py')
 
   # define model, params
   execfile('./scripts/models/beating_the_benchmark.py')
+  execfile('./scripts/models/porter_stemmer.py')
 
-  # create grid search for best params
-  scorer = metrics.make_scorer(ml_metrics.quadratic_weighted_kappa, greater_is_better = True)
-  searcher = GridSearchCV(model, params, n_jobs=-1, verbose=10, scoring=scorer, cv=3)
-  # searcher = RandomizedSearchCV(model, params, n_jobs=-1, verbose=10, scoring=scorer, cv=3)
-  searcher.fit(features, targets)
+  # after all features have created, we create a mask to effectively "set aside"
+  # some data to later validate an ensemble (later maybe loo and do this a few times?)
+  test_split = 0.3
+  random = np.random.rand(train.shape[0])
+  train_mask = np.where(random > test_split)
+  test_mask = np.where(random <= test_split)
 
-  # print score and best params
-  print("Best score... %0.3f" % searcher.best_score_)
-  print("Best params...")
-  best_params = searcher.best_estimator_.get_params()
-  for param in sorted(params.keys()):
-    print("\t%s: %r" % (param, best_params[param]))
+  # for each model, we grid search the best params using the masked data
+  for i in range(len(models)):
+    model = models[i]
+    current_params = params[i]
+    current_features = features[i]
 
-  # require --submit flag to generate submission csv
+    scorer = metrics.make_scorer(ml_metrics.quadratic_weighted_kappa, greater_is_better=True)
+    searcher = GridSearchCV(model, current_params, n_jobs=1, verbose=10, scoring=scorer, cv=3)
+    # searcher = RandomizedSearchCV(model, current_params, n_jobs=-1, verbose=10, scoring=scorer, cv=3)
+    searcher.fit(current_features[train_mask], targets[train_mask])
+
+    # print score and best params
+    print("Best score... %0.3f" % searcher.best_score_)
+    print("Best params...")
+    best_params = searcher.best_estimator_.get_params()
+    for param in sorted(current_params.keys()):
+      print("\t%s: %r" % (param, best_params[param]))
+
+    # save the trained model for later
+    best.append(searcher.best_estimator_)
+
+  # we then validate the ensemble on the set aside features and targets
+  predictions = []
+  for i in range(len(best)):
+    model = best[i]
+    predictions.append(model.predict(features[i][test_mask]))
+
+  # just averaging for now, play with this later
+  predictions = np.sum(predictions, axis=0) / len(predictions)
+  print("Ensemble score... %0.3f" % ml_metrics.quadratic_weighted_kappa(targets[test_mask], predictions))
+
+  # once the ensemble has been validated, we can fit each model with all the
+  # training data and make predictions for the real test data, if we want to
+  # generate a submission csv (requires --submit flag)
   if "--submit" in sys.argv:
 
-    # run best model on test data
-    best = searcher.best_estimator_
-    predictions = best.predict(test_features)
+    # run all models on all data
+    predictions = []
+    for i in range(len(best)):
+      model = best[i]
+      print("Thinking...")
+      model.fit(features[i], targets)
+      print("Predicting...")
+      predictions.append(model.predict(test_features[i]))
+
+    # just averaging for now, play with this later
+    predictions = np.sum(predictions, axis=0) / len(predictions)
 
     # write submission file w/ git hash identifier
-    submission = pd.DataFrame({"id": idx, "prediction": predictions})
+    submission = pd.DataFrame({"id": ids, "prediction": predictions})
     proc = subprocess.Popen(["git", "rev-parse", "HEAD"], stdout=subprocess.PIPE)
     submission_name = proc.stdout.read().strip()
     submission.to_csv("./submissions/" + submission_name + ".csv", index=False)

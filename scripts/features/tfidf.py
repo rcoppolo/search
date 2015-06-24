@@ -1,5 +1,5 @@
 # requires train, test
-# creates features, test_features
+# appends to features, test_features
 
 """
 Beating the Benchmark
@@ -22,5 +22,5 @@ tfv = TfidfVectorizer(min_df=3, max_features=None,
 
 # Fit TFIDF
 tfv.fit(traindata)
-features = tfv.transform(traindata)
-test_features = tfv.transform(testdata)
+features.append(tfv.transform(traindata))
+test_features.append(tfv.transform(testdata))
