@@ -31,16 +31,16 @@ if __name__ == "__main__":
 
   # define features
   execfile('./scripts/features/word2vec.py')
-  # execfile('./scripts/features/tfidf.py')
-  # execfile('./scripts/features/porter_stemmer.py')
+  execfile('./scripts/features/tfidf.py')
+  execfile('./scripts/features/porter_stemmer.py')
 
   # define model, params
   execfile('./scripts/models/word2vec.py')
-  # execfile('./scripts/models/beating_the_benchmark.py')
-  # execfile('./scripts/models/porter_stemmer.py')
+  execfile('./scripts/models/beating_the_benchmark.py')
+  execfile('./scripts/models/porter_stemmer.py')
 
   # after all features have created, we create a mask to effectively "set aside"
-  # some data to later validate an ensemble (later maybe loo and do this a few times?)
+  # some data to later validate an ensemble (later maybe loop and do this a few times?)
   test_split = 0.3
   random = np.random.rand(train.shape[0])
   train_mask = np.where(random > test_split)

@@ -27,10 +27,9 @@ def setup_sentences(not_text):
       sentences.append(clean_text(raw_sentence))
   return sentences
 
+# try w/o the description?
 traincombined = train.apply(lambda x:'%s %s %s' % (x['query'],x['product_title'],x['product_description']),axis=1)
 # traincombined = train.apply(lambda x:'%s %s' % (x['query'],x['product_title']),axis=1)
-# testcombined = test.apply(lambda x:'%s %s %s' % (x['query'],x['product_title'],x['product_description']),axis=1)
-# testcombined = test.apply(lambda x:'%s %s' % (x['query'],x['product_title']),axis=1)
 
 sentences = []
 for text in traincombined:
@@ -38,6 +37,7 @@ for text in traincombined:
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
+# try fiddling
 num_features = 400
 min_word_count = 10
 num_workers = 4

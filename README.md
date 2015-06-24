@@ -5,3 +5,9 @@ neat language stuff!
 Run `python scripts/main.py` for cross validation and grid search.
 
 Run `python scripts/main.py --submit` to generate submission file.
+
+### Todo
+
+* Cross validate ensemble locally
+* Fiddle w/ word2vec more
+* Think
