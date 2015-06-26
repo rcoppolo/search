@@ -25,57 +25,75 @@ if __name__ == "__main__":
   train = train.drop(['median_relevance', 'relevance_variance'], axis=1)
 
   # required variables
-  features, test_features, models, params, best = [], [], [], [], []
+  features, test_features, models, params, best, ensemble_scores = [], [], [], [], [], []
 
   # my ugly way of trying out different features and models...
 
   # define features
   execfile('./scripts/features/word2vec.py')
+  # execfile('./scripts/features/variance.py')
   execfile('./scripts/features/tfidf.py')
   execfile('./scripts/features/porter_stemmer.py')
 
   # define model, params
   execfile('./scripts/models/word2vec.py')
+  # execfile('./scripts/models/variance.py')
   execfile('./scripts/models/beating_the_benchmark.py')
   execfile('./scripts/models/porter_stemmer.py')
 
   # after all features have created, we create a mask to effectively "set aside"
   # some data to later validate an ensemble (later maybe loop and do this a few times?)
+
+  ####
+
+  cv_ensemble = 1 #5
   test_split = 0.3
-  random = np.random.rand(train.shape[0])
-  train_mask = np.where(random > test_split)
-  test_mask = np.where(random <= test_split)
 
-  # for each model, we grid search the best params using the masked data
-  for i in range(len(models)):
-    model = models[i]
-    current_params = params[i]
-    current_features = features[i]
+  for _i in range(cv_ensemble):
+    random = np.random.rand(train.shape[0])
+    train_mask = np.where(random > test_split)
+    test_mask = np.where(random <= test_split)
 
-    scorer = metrics.make_scorer(ml_metrics.quadratic_weighted_kappa, greater_is_better=True)
-    searcher = GridSearchCV(model, current_params, n_jobs=1, verbose=10, scoring=scorer, cv=3)
-    # searcher = RandomizedSearchCV(model, current_params, n_jobs=-1, verbose=10, scoring=scorer, cv=3)
-    searcher.fit(current_features[train_mask], targets[train_mask])
+    # for each model, we grid search the best params using the masked data
+    for i in range(len(models)):
+      # just fit if we've already grid searched, to save time
+      if len(best) == len(models): # and False:
+        print("Fitting a model...")
+        current_features = features[i]
+        best[i].fit(current_features[train_mask], targets[train_mask])
+      else:
+        model = models[i]
+        current_params = params[i]
+        current_features = features[i]
 
-    # print score and best params
-    print("Best score... %0.3f" % searcher.best_score_)
-    print("Best params...")
-    best_params = searcher.best_estimator_.get_params()
-    for param in sorted(current_params.keys()):
-      print("\t%s: %r" % (param, best_params[param]))
+        scorer = metrics.make_scorer(ml_metrics.quadratic_weighted_kappa, greater_is_better=True)
+        searcher = GridSearchCV(model, current_params, n_jobs=1, verbose=10, scoring=scorer, cv=3)
+        # searcher = RandomizedSearchCV(model, current_params, n_jobs=-1, verbose=10, scoring=scorer, cv=3)
+        searcher.fit(current_features[train_mask], targets[train_mask])
 
-    # save the trained model for later
-    best.append(searcher.best_estimator_)
+        # print score and best params
+        print("Best score... %0.3f" % searcher.best_score_)
+        print("Best params...")
+        best_params = searcher.best_estimator_.get_params()
+        for param in sorted(current_params.keys()):
+          print("\t%s: %r" % (param, best_params[param]))
 
-  # we then validate the ensemble on the set aside features and targets
-  predictions = []
-  for i in range(len(best)):
-    model = best[i]
-    predictions.append(model.predict(features[i][test_mask]))
+        # save the trained model for later
+        best.append(searcher.best_estimator_)
 
-  # just averaging for now, play with this later
-  predictions = np.sum(predictions, axis=0) / len(predictions)
-  print("Ensemble score... %0.3f" % ml_metrics.quadratic_weighted_kappa(targets[test_mask], predictions))
+    # we then validate the ensemble on the set aside features and targets
+    predictions = []
+    for i in range(len(best)):
+      model = best[i]
+      predictions.append(model.predict(features[i][test_mask]))
+
+    # just averaging for now, play with this later
+    predictions = np.sum(predictions, axis=0) / len(predictions)
+    score = ml_metrics.quadratic_weighted_kappa(targets[test_mask], predictions)
+    ensemble_scores.append(score)
+    print("Ensemble score... %0.3f" % score)
+
+  print("CV ensemble score... %0.3f" % np.mean(ensemble_scores))
 
   # once the ensemble has been validated, we can fit each model with all the
   # training data and make predictions for the real test data, if we want to

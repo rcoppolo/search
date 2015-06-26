@@ -8,6 +8,6 @@ Run `python scripts/main.py --submit` to generate submission file.
 
 ### Todo
 
-* Cross validate ensemble locally
 * Fiddle w/ word2vec more
+* Look into if the variance helps at all
 * Think

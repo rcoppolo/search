@@ -19,7 +19,7 @@ params.append({
   # 'm__bootstrap' : [False],
   # 'm__criterion' : ["gini"],
   # SVC
-  'm__C': [1000],
-  'm__gamma': [0.0001],
+  'm__C': [1000], # w/ 500 features, 100
+  'm__gamma': [0.0001], # w/ 500 features, 0.001
   'm__class_weight': [None]
 })
