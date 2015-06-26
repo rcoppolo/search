@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
   # define features
   execfile('./scripts/features/word2vec.py')
-  # execfile('./scripts/features/variance.py')
+  execfile('./scripts/features/variance.py')
   execfile('./scripts/features/tfidf.py')
   execfile('./scripts/features/porter_stemmer.py')
 
@@ -44,9 +44,7 @@ if __name__ == "__main__":
   # after all features have created, we create a mask to effectively "set aside"
   # some data to later validate an ensemble (later maybe loop and do this a few times?)
 
-  ####
-
-  cv_ensemble = 1 #5
+  cv_ensemble = 3 #5
   test_split = 0.3
 
   for _i in range(cv_ensemble):
