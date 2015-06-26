@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
   # define features
   execfile('./scripts/features/word2vec.py')
-  execfile('./scripts/features/variance.py')
+  # execfile('./scripts/features/variance.py')
   execfile('./scripts/features/tfidf.py')
   execfile('./scripts/features/porter_stemmer.py')
 

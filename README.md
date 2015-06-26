@@ -8,6 +8,6 @@ Run `python scripts/main.py --submit` to generate submission file.
 
 ### Todo
 
-* Fiddle w/ word2vec more
-* Look into if the variance helps at all
+* Try out a glove model
+* Use some more external data
 * Think
