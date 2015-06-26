@@ -28,8 +28,8 @@ def setup_sentences(not_text):
   return sentences
 
 # try w/o the description?
-traincombined = train.apply(lambda x:'%s %s %s' % (x['query'],x['product_title'],x['product_description']),axis=1)
-# traincombined = train.apply(lambda x:'%s %s' % (x['query'],x['product_title']),axis=1)
+# traincombined = train.apply(lambda x:'%s %s %s' % (x['query'],x['product_title'],x['product_description']),axis=1)
+traincombined = train.apply(lambda x:'%s %s' % (x['query'],x['product_title']),axis=1)
 
 sentences = []
 for text in traincombined:
