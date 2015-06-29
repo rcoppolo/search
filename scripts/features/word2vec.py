@@ -71,6 +71,7 @@ for example in train.values:
     if word in index2word_set:
       ntwords = ntwords + 1.
       titleVec = np.add(titleVec, w2v[word])
+  # maybe try sum instead of average?
   queryVec = np.divide(queryVec,nqwords)
   titleVec = np.divide(titleVec,ntwords)
   train_values.append(np.concatenate([queryVec, titleVec]))

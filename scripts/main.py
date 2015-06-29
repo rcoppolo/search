@@ -31,12 +31,14 @@ if __name__ == "__main__":
 
   # define features
   execfile('./scripts/features/word2vec.py')
+  execfile('./scripts/features/glove.py')
   # execfile('./scripts/features/variance.py')
   execfile('./scripts/features/tfidf.py')
   execfile('./scripts/features/porter_stemmer.py')
 
   # define model, params
   execfile('./scripts/models/word2vec.py')
+  execfile('./scripts/models/glove.py')
   # execfile('./scripts/models/variance.py')
   execfile('./scripts/models/beating_the_benchmark.py')
   execfile('./scripts/models/porter_stemmer.py')

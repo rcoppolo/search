@@ -12,6 +12,7 @@ Run `python scripts/main.py --submit` to generate submission file.
 
 ### Todo
 
-* Try out a glove model
+* Try out GloVe features/model
+* Try out a NN model
 * Use some more external data
 * Think
