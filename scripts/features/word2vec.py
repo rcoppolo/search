@@ -38,8 +38,8 @@ for text in traincombined:
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 # try fiddling
-num_features = 400
-min_word_count = 10
+num_features = 50 # 400
+min_word_count = 5 # 10
 num_workers = 4
 context = 10
 downsampling = 1e-3

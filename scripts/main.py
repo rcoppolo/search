@@ -33,20 +33,20 @@ if __name__ == "__main__":
   execfile('./scripts/features/word2vec.py')
   execfile('./scripts/features/glove.py')
   # execfile('./scripts/features/variance.py')
-  # execfile('./scripts/features/tfidf.py')
+  execfile('./scripts/features/tfidf.py')
   execfile('./scripts/features/porter_stemmer.py')
 
   # define model, params
   execfile('./scripts/models/word2vec.py')
   execfile('./scripts/models/glove.py')
   # execfile('./scripts/models/variance.py')
-  # execfile('./scripts/models/beating_the_benchmark.py')
+  execfile('./scripts/models/beating_the_benchmark.py')
   execfile('./scripts/models/porter_stemmer.py')
 
   # after all features have created, we create a mask to effectively "set aside"
   # some data to later validate an ensemble (later maybe loop and do this a few times?)
 
-  cv_ensemble = 3 #5
+  cv_ensemble = 5
   test_split = 0.3
 
   for _i in range(cv_ensemble):

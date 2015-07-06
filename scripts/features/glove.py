@@ -4,15 +4,18 @@
 import subprocess
 import os.path
 
+# equal to SAVE_FILE in scripts/bash/glove.sh
+vector_file = './tmp/glove_vectors.txt'
+
 # only need this once to generate vector file
-if not os.path.isfile('./tmp/glove_vectors.txt'):
+if not os.path.isfile(vector_file):
   f = open('./tmp/words_for_glove.txt', 'w')
   for sentence in sentences:
     f.write("%s " % " ".join(sentence))
 
   subprocess.call(["./scripts/bash/glove.sh"])
 
-words = pd.read_csv('./tmp/glove_vectors.txt', sep=" ", header=None)
+words = pd.read_csv(vector_file, sep=" ", header=None)
 word_set = set(words[0])
 words = np.asarray(words)
 num_features = 50 # equal to VECTOR_SIZE in ./scripts/bash/glove.sh
@@ -21,7 +24,7 @@ train_values = []
 test_values = []
 
 def get_word_values(word):
-  return words[np.where(words[:,0] == word)][:,range(1,51)][0]
+  return words[np.where(words[:,0] == word)][:,range(1,num_features + 1)][0]
 
 print("creating GloVe train features...")
 for example in train.values:
