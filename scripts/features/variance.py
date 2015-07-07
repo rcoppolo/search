@@ -1,4 +1,5 @@
 # DOESN'T append to features or test_features, just adds to word2vec features
+# didn't end up using this feature
 
 from sklearn.svm import SVR
 from sklearn.pipeline import Pipeline

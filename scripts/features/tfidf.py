@@ -6,6 +6,7 @@ Beating the Benchmark
 Search Results Relevance @ Kaggle
 __author__ : Abhishek
 
+https://www.kaggle.com/abhishek/crowdflower-search-relevance/beating-the-benchmark/run/12217
 """
 
 from sklearn.feature_extraction.text import TfidfVectorizer

@@ -1,6 +1,8 @@
 # requires train, test
 # appends to features, test_features
 
+# https://www.kaggle.com/duttaroy/crowdflower-search-relevance/porter-stemmer/run/16768
+
 import re
 from bs4 import BeautifulSoup
 from nltk.stem.porter import PorterStemmer
