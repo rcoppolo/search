@@ -5,7 +5,7 @@ neat language stuff!
 Features and models live in `scripts/{features,models}`
 
 Expects compiled [GloVe](http://nlp.stanford.edu/projects/glove/) directory to
-be at ../glove compared to this directory (or define `GLOVE_PATH` in
+be at `../glove` compared to this directory (or define `GLOVE_PATH` in
 `./scripts/bash/glove.sh`).
 
 Run `python scripts/main.py` for cross validation and grid search.
